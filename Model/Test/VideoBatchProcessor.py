@@ -8,6 +8,7 @@ from pathlib import Path
 from DataExtraction import DataExtractor
 from ImageProcessor import ImageProcessor
 from KeypointExtractor import KeypointExtractor
+from MediaPipeService import MediaPipeService
 from Utilities import Utilities
 
 
@@ -24,9 +25,14 @@ class VideoBatchProcessor:
     def __init__(self, directory, repetitions, signs, frames, confidence, mp_path):
         self.directory = directory  # Here we store the directory where the videos are located
         self.extractor = KeypointExtractor()  # Instance of KeypointExtractor to extract keypoints
-        self.processor = ImageProcessor()  # Instance of ImageProcessor to process the video frames
+        self.mp_service = MediaPipeService()
+        self.processor = ImageProcessor(self.mp_service)  # Instance of ImageProcessor to process the video frames
         self.data_extractor = DataExtractor(
-            repetitions=repetitions, signs=signs, frames_per_sequence=frames, mp_path=mp_path
+            repetitions=repetitions,
+            signs=signs,
+            frames_per_sequence=frames,
+            mp_path=mp_path,
+            mp_service=self.mp_service,
         )  # Instance of DataExtractor to handle video processing
         self.repetitions = repetitions
         self.signs = signs
