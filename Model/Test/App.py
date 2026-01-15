@@ -5,9 +5,9 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from CreateProjectDirsCommand import CreateProjectDirsCommand
 from DataLabelling import DataLabelling
 from RealtimePrediction import RealtimeDetection
-from CreateProjectDirsCommand import CreateProjectDirsCommand
 from Strings import Strings
 from TrainingLSTM import TrainingLSTM
 from Utilities import Utilities
@@ -21,7 +21,20 @@ class Context:
     DEFAULT_REPETITIONS = 100
     DEFAULT_FRAMES = 30
     # Use Tuple for immutable default configuration
-    DEFAULT_SIGNS: tuple[str, ...] = ("HOLA", "ADIOS", "GRACIAS", "POR FAVOR", "SI", "NO", "BUENO", "MAL", "COMER", "BEBER", "CASA", "TRABAJAR")
+    DEFAULT_SIGNS: tuple[str, ...] = (
+        "HOLA",
+        "ADIOS",
+        "GRACIAS",
+        "POR FAVOR",
+        "SI",
+        "NO",
+        "BUENO",
+        "MAL",
+        "COMER",
+        "BEBER",
+        "CASA",
+        "TRABAJAR",
+    )
     DEFAULT_CONFIDENCE = 0.7
 
     repetitions: int = DEFAULT_REPETITIONS
@@ -87,24 +100,9 @@ def cmd_extract_data_from_videos(ctx: Context) -> bool:
     confidence = _get_user_confidence(ctx.confidence)
     logger.info(f"Confianza establecida en: {confidence}")
 
-    # Main menu for data extraction
-    print(Strings.ExtractData.MENU)
-    user_choice = input(Strings.ExtractData.INPUT_OPTION)
-    logger.info(f"El usuario seleccionó {user_choice} en el menú de extracción de datos")
-
-    if user_choice == "1":
-        print(Strings.ExtractData.EXTRACTING_SPECIFIC)
-        print(Strings.ExtractData.NO_VIDEO_SPECIFIED)
-        processor = _create_video_processor(ctx, confidence, directory=None)
-        processor.extract_single_path()
-    elif user_choice == "2":
-        print(Strings.ExtractData.EXTRACTING_ALL)
-        processor = _create_video_processor(ctx, confidence, directory=ctx.video_paths)
-        processor.extract_parent_path()
-    elif user_choice == "3":
-        print(Strings.ProcessBatch.RETURNING_MAIN)
-    else:
-        print(Strings.MainMenu.INVALID_OPTION)
+    print(Strings.ExtractData.EXTRACTING_ALL)
+    processor = _create_video_processor(ctx, confidence, directory=ctx.video_paths)
+    processor.extract_data_from_all_videos()
 
     return True
 
@@ -114,22 +112,9 @@ def cmd_process_video_batch(ctx: Context) -> bool:
     confidence = _get_user_confidence(ctx.confidence)
     logger.info(f"Confianza establecida en: {confidence}")
 
-    # Menu for batch video processing
-    print(Strings.ProcessBatch.MENU)
-    user_choice2 = input(Strings.ProcessBatch.INPUT_OPTION)
-    logger.info(f"El usuario seleccionó {user_choice2} en el menú de procesamiento de videos")
-
-    if user_choice2 == "1":
-        print(Strings.ExtractData.NO_VIDEO_SPECIFIED)
-        processor = _create_video_processor(ctx, confidence, directory=None)
-        processor.run()
-    elif user_choice2 == "2":
-        processor = _create_video_processor(ctx, confidence, directory=ctx.video_paths)
-        processor.train()
-    elif user_choice2 == "3":
-        print(Strings.ProcessBatch.RETURNING_MAIN)
-    else:
-        print(Strings.MainMenu.INVALID_OPTION)
+    print(Strings.ProcessBatch.EXTRACTING_ALL)
+    processor = _create_video_processor(ctx, confidence, directory=ctx.video_paths)
+    processor.verify_batch_processing()
 
     return True
 

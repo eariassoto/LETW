@@ -31,28 +31,10 @@ class Strings:
         SET_MSG = "Confianza establecida en: {}\n"
 
     class ExtractData:
-        MENU = (
-            "\nExtracción de datos de video: "
-            "Opciones: "
-            "\n1. Extraer datos de un video específico "
-            "\n2. Procesar todos los videos en un directorio"
-            "\n3. Regresar \n"
-        )
-        INPUT_OPTION = "Seleccione una opción: "
-        EXTRACTING_SPECIFIC = "Extrayendo datos de un video específico..."
-        NO_VIDEO_SPECIFIED = "No se especifico ningún video, porfavor agregue el video dentro de la variable"
         EXTRACTING_ALL = "Extrayendo datos de todos los videos de un directorio padre"
 
     class ProcessBatch:
-        MENU = (
-            "\nOpciones de Procesamiento de videos: "
-            "\nOjo solo para revisar los videos, no para extraer datos"
-            "\n1. Extraer datos de un video específico"
-            "\n2. Procesar todos los videos en un directorio"
-            "\n3. Regresar"
-        )
-        INPUT_OPTION = "Seleccione una opción: "
-        RETURNING_MAIN = "Regresando al menú principal... \n"
+        EXTRACTING_ALL = "Verificando datos de todos los videos de un directorio padre"
 
     class RealtimeDetection:
         TEST_MSG = "Prueba de deteccion: "
