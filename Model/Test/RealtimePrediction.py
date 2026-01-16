@@ -56,13 +56,13 @@ class RealtimeDetection:
             self.logger.error("No se puede acceder a la camara")
             return None
 
-        with self.service.start_holistic_session(self.confidence) as processor:
+        with self.service.create_holistic(self.confidence) as model:
             while cap.isOpened():
                 ret, frame = cap.read()
                 if not ret:
                     break
 
-                image, results = processor.process(frame, draw=True)
+                image, results = self.service.process(model, frame, draw=True)
                 print("resultados", type(results))
                 self.logger.info(f"Resultados obtenidos: {results}")
 

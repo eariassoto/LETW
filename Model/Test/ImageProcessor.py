@@ -38,7 +38,7 @@ class ImageProcessor:
 
         last_frame, last_result = None, None
 
-        with self.service.start_holistic_session(confidence) as processor:
+        with self.service.create_holistic(confidence) as model:
             while cap.isOpened():
                 ret, frame = cap.read()
                 if not ret:
@@ -47,7 +47,7 @@ class ImageProcessor:
                 if transform:
                     frame = transform(frame)
 
-                image, results = processor.process(frame, draw=True)
+                image, results = self.service.process(model, frame, draw=True)
 
                 if (
                     results.pose_landmarks

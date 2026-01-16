@@ -8,32 +8,24 @@ import numpy as np
 from Utilities import Utilities
 
 
-class HolisticProcessor:
+class MediaPipeService:
     """
-    Encapsulates the MediaPipe Holistic model lifecycle and processing.
-    Used as a context manager.
+    Centralizes MediaPipe Holistic initialization and detection logic.
+    Provides a consistent way to process frames and draw landmarks.
     """
 
-    def __init__(self, holistic_class: Any, confidence: float) -> None:
-        self.holistic_class = holistic_class
-        self.confidence = confidence
-        self.model: Any | None = None
+    def __init__(self) -> None:
+        self.logger = Utilities.setup_logging()
 
-    def __enter__(self) -> HolisticProcessor:
-        self.model = self.holistic_class(
-            min_detection_confidence=self.confidence, min_tracking_confidence=self.confidence
-        )
-        return self
+    def create_holistic(self, confidence: float) -> Any:
+        """Creates and returns a MediaPipe Holistic model instance."""
+        return mp.solutions.holistic.Holistic(min_detection_confidence=confidence, min_tracking_confidence=confidence)
 
-    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
-        if self.model:
-            self.model.close()
-
-    def process(self, frame: np.ndarray, draw: bool = False) -> tuple[np.ndarray, Any]:
-        """Processes a single frame using the internal MediaPipe model."""
+    def process(self, model: Any, frame: np.ndarray, draw: bool = False) -> tuple[np.ndarray, Any]:
+        """Processes a single frame using the provided MediaPipe model."""
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_rgb.flags.writeable = False
-        results = self.model.process(frame_rgb)
+        results = model.process(frame_rgb)
         frame_rgb.flags.writeable = True
         image = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
 
@@ -64,17 +56,3 @@ class HolisticProcessor:
 
         if results.right_hand_landmarks:
             mp_drawing.draw_landmarks(frame, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
-
-
-class MediaPipeService:
-    """
-    Centralizes MediaPipe Holistic initialization and detection logic.
-    Provides a consistent way to process frames and draw landmarks.
-    """
-
-    def __init__(self) -> None:
-        self.logger = Utilities.setup_logging()
-
-    def start_holistic_session(self, confidence: float) -> HolisticProcessor:
-        """Creates and returns a HolisticProcessor context manager."""
-        return HolisticProcessor(mp.solutions.holistic.Holistic, confidence)

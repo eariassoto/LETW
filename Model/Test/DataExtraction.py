@@ -83,7 +83,7 @@ class DataExtractor:
 
         # Main MediaPipe Holistic model
 
-        with self.service.start_holistic_session(confidence) as processor:
+        with self.service.create_holistic(confidence) as model:
             sequence = 0
 
             for video_idx in range(self.repetitions):
@@ -129,7 +129,7 @@ class DataExtractor:
                     if transform:
                         frame = transform(frame)
 
-                    image, results = processor.process(frame, draw=True)
+                    image, results = self.service.process(model, frame, draw=True)
                     # Remove the comment to show the video with the landmarks; used during development and not required now
                     cv2.imshow("Video Detection", image)
                     cv2.waitKey(1)
