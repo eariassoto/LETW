@@ -2,6 +2,10 @@
 # Updated by Anthony Villalobos 03/09/2025
 
 
+from __future__ import annotations
+
+from typing import Any
+
 import cv2
 import numpy as np
 from keras.models import load_model
@@ -17,15 +21,15 @@ class RealtimeDetection:
     signs: The list of signs that the model can recognize.
     """
 
-    def __init__(self, signs, confidence):
+    def __init__(self, signs: list[str], confidence: float) -> None:
         self.extractor = KeypointExtractor()
         self.signs = signs
         self.confidence = confidence
         self.service = MediaPipeService()
         self.logger = Utilities.setup_logging()
-        self.sequence = []
-        self.sentence = []
-        self.predictions = []
+        self.sequence: list[np.ndarray] = []
+        self.sentence: list[str] = []
+        self.predictions: list[int] = []
         self.treshold = 0.7
         self.colors = [
             (245, 117, 16),
@@ -41,7 +45,7 @@ class RealtimeDetection:
             (16, 117, 245),
         ]
 
-    def real_time_detection(self):
+    def real_time_detection(self) -> list[str] | None:
         model_path = Utilities.model_route()
         model = load_model(model_path)
         print(model.summary())
@@ -122,7 +126,7 @@ class RealtimeDetection:
             cv2.destroyAllWindows()
             return self.sentence  # Return the recognized sentence
 
-    def visualize(self, input_frame, results):
+    def visualize(self, input_frame: np.ndarray, results: Any) -> np.ndarray:
         output_frame = input_frame.copy()
         for num, prob in enumerate(results):
             if isinstance(prob, np.ndarray | list):

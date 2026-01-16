@@ -1,12 +1,16 @@
 # Developed by Anthony Villalobos 08/01/2025
 # Updated by Anthony Villalobos 23/09/2025
 
+from __future__ import annotations
+
 import time
+from collections.abc import Callable
 from pathlib import Path
 
 import cv2
 import numpy as np
 from KeypointExtractor import KeypointExtractor
+from MediaPipeService import MediaPipeService
 from Utilities import Utilities
 
 
@@ -16,7 +20,14 @@ class DataExtractor:
     This is used to get the data upon which the model will be trained.
     """
 
-    def __init__(self, repetitions, frames_per_sequence, signs, mp_path, mp_service):
+    def __init__(
+        self,
+        repetitions: int,
+        frames_per_sequence: int,
+        signs: list[str],
+        mp_path: str,
+        mp_service: MediaPipeService,
+    ) -> None:
         self.service = mp_service
         self.extractor = KeypointExtractor()  # Instance of KeypointExtractor to extract keypoints
         self.signs = signs
@@ -25,7 +36,12 @@ class DataExtractor:
         self.frames_per_sequence = frames_per_sequence
         self.logger = Utilities.setup_logging()
 
-    def process_video(self, video_path, confidence, transform=None):
+    def process_video(
+        self,
+        video_path: str | Path,
+        confidence: float,
+        transform: Callable[[np.ndarray], np.ndarray] | None = None,
+    ) -> tuple[None, None]:
         """This method is the one in charge of processing the video and extracting the keypoints from the specified video path.
         Variables:
         video_path: The path to the video file or directory containing videos.
