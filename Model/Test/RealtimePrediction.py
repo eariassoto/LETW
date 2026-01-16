@@ -52,15 +52,13 @@ class RealtimeDetection:
             self.logger.error("No se puede acceder a la camara")
             return None
 
-        with self.service.mp_holistic.Holistic(
-            min_detection_confidence=self.confidence, min_tracking_confidence=self.confidence
-        ) as holistic:
+        with self.service.start_holistic_session(self.confidence) as processor:
             while cap.isOpened():
                 ret, frame = cap.read()
                 if not ret:
                     break
 
-                image, results = self.service.mediapipe_detection(frame, holistic)
+                image, results = processor.process(frame)
                 print("resultados", type(results))
                 self.logger.info(f"Resultados obtenidos: {results}")
 
