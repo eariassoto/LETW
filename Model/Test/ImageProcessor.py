@@ -47,7 +47,7 @@ class ImageProcessor:
                 if transform:
                     frame = transform(frame)
 
-                image, results = processor.process(frame)
+                image, results = processor.process(frame, draw=True)
 
                 if (
                     results.pose_landmarks
@@ -58,7 +58,6 @@ class ImageProcessor:
                     last_frame = frame
                     last_result = results
 
-                self.service.draw_landmarks(image, results)
                 # Remove the comment to show the video with the landmarks; used during development, not needed now
                 cv2.imshow("Video Detection", image)
 

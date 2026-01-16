@@ -29,27 +29,18 @@ class HolisticProcessor:
         if self.model:
             self.model.close()
 
-    def process(self, frame: np.ndarray) -> tuple[np.ndarray, Any]:
+    def process(self, frame: np.ndarray, draw: bool = False) -> tuple[np.ndarray, Any]:
         """Processes a single frame using the internal MediaPipe model."""
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_rgb.flags.writeable = False
         results = self.model.process(frame_rgb)
         frame_rgb.flags.writeable = True
-        return cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR), results
+        image = cv2.cvtColor(frame_rgb, cv2.COLOR_RGB2BGR)
 
+        if draw:
+            self.draw_landmarks(image, results)
 
-class MediaPipeService:
-    """
-    Centralizes MediaPipe Holistic initialization and detection logic.
-    Provides a consistent way to process frames and draw landmarks.
-    """
-
-    def __init__(self) -> None:
-        self.logger = Utilities.setup_logging()
-
-    def start_holistic_session(self, confidence: float) -> HolisticProcessor:
-        """Creates and returns a HolisticProcessor context manager."""
-        return HolisticProcessor(mp.solutions.holistic.Holistic, confidence)
+        return image, results
 
     def draw_landmarks(self, frame: np.ndarray, results: Any) -> None:
         """Draws detected landmarks on the frame."""
@@ -73,3 +64,17 @@ class MediaPipeService:
 
         if results.right_hand_landmarks:
             mp_drawing.draw_landmarks(frame, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
+
+
+class MediaPipeService:
+    """
+    Centralizes MediaPipe Holistic initialization and detection logic.
+    Provides a consistent way to process frames and draw landmarks.
+    """
+
+    def __init__(self) -> None:
+        self.logger = Utilities.setup_logging()
+
+    def start_holistic_session(self, confidence: float) -> HolisticProcessor:
+        """Creates and returns a HolisticProcessor context manager."""
+        return HolisticProcessor(mp.solutions.holistic.Holistic, confidence)

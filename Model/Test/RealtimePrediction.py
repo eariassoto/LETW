@@ -62,11 +62,9 @@ class RealtimeDetection:
                 if not ret:
                     break
 
-                image, results = processor.process(frame)
+                image, results = processor.process(frame, draw=True)
                 print("resultados", type(results))
                 self.logger.info(f"Resultados obtenidos: {results}")
-
-                self.service.draw_landmarks(image, results)
 
                 keypoints, success = self.extractor.extract(results)
                 if not success or keypoints.shape != (1662,):  # leave the comma

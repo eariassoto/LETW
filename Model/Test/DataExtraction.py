@@ -129,8 +129,7 @@ class DataExtractor:
                     if transform:
                         frame = transform(frame)
 
-                    image, results = processor.process(frame)
-                    self.service.draw_landmarks(image, results)
+                    image, results = processor.process(frame, draw=True)
                     # Remove the comment to show the video with the landmarks; used during development and not required now
                     cv2.imshow("Video Detection", image)
                     cv2.waitKey(1)
